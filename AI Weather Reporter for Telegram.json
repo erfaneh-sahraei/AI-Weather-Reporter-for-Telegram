@@ -1,0 +1,137 @@
+{
+  "name": "AI Weather Reporter for Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "cityName": "Tehran, IR"
+      },
+      "type": "n8n-nodes-base.openWeatherMap",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        -192
+      ],
+      "id": "2ae1f680-b2f5-455d-9171-a704aa8268fa",
+      "name": "OpenWeatherMap"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=نقش :\nشما یک ابزار یاجاد پیام هواشناسی برای تلگرام هستید.\nوظیفه:\nبر اساس ورودی که از نود openweather دریافت میکنید باید یک پیام کامل و خوانا از وضعیت هوانشاسی شهر مورد نظر برای تلگرام ایجاد کنید .\n\nورودی:\n{{ $json.name }}\n{{ $json.main.temp }}\nقالب پیشنهادی پیام :\nوضعیت آب و هوای شهر {{ $json.name }} زیبای  \nشهر : {{ $json.name }}\nدما : {{ $json.main.temp }}\nمحدودیت :\n1. برای شهر مورد نظر حتما یک توضیح در حدود دو خط بنویس.\n2. از توضیحات اضافه جلوگیری کن .\n3 از استیکرهای مربوط به وضعیت آب و هوا استفاده کن.\nخروجی :\nپیام مورد نظر برای تلگرام می باشد .",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -432,
+        -192
+      ],
+      "id": "2de8532f-5d5b-42cf-9ec4-073e7b1e8765",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -576,
+        16
+      ],
+      "id": "6b2f45b5-1214-4984-acb2-d31cc3b051bc",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -880,
+        -192
+      ],
+      "id": "753c507f-51d2-4fe7-a25c-dffd954053a4",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -64,
+        -192
+      ],
+      "id": "c9bedf0d-7b3a-4010-9ac2-02ee460ba1e5",
+      "name": "Send a text message"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenWeatherMap": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenWeatherMap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
