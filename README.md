@@ -21,7 +21,7 @@ An automated workflow built in **n8n** that fetches live weather data from **Ope
 ---
 
 ## 🛠️ Setup & Configuration
-1. Import `weather-telegram-workflow.json` into your n8n instance.
+1. Import `AI Weather Reporter for Telegram.json` into your n8n instance.
 2. Add your **OpenWeatherMap** API credentials.
 3. Configure your **OpenAI / Chat Model** credentials.
 4. Set up your **Telegram Bot** token and target `chat_id` in the Telegram node.
